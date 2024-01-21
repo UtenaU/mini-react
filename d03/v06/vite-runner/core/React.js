@@ -58,11 +58,15 @@ function commitRoot(root) {
 }
 function commitWork(fiber) {
     if (!fiber) return
+
     let fiberParent = fiber.parent
     if (!fiberParent.dom) {
         fiberParent = fiberParent.parent
     }
-    fiber.parent.dom.append(fiber.dom)
+    if (fiber.dom) {
+        // fiber.parent.dom.append(fiber.dom)
+        fiberParent.dom.append(fiber.dom)
+    }
     commitWork(fiber.child)
     commitWork(fiber.sibling)
 }
@@ -81,8 +85,7 @@ function updateProps(dom, props) {
     });
 }
 
-function initChildren(fiber) {
-    const children = fiber.props.children;
+function initChildren(fiber,children) {
     let prevChild = null;
     children.forEach((child, index) => {
         const newFiber = {
@@ -104,6 +107,9 @@ function initChildren(fiber) {
 }
 function performWorkOfUnit(fiber) {
     const isFuctionComponent = typeof fiber.type === "function"
+    if(isFuctionComponent){
+        console.log('is function',fiber.type)
+    }
     if (!isFuctionComponent) {
         if (!fiber.dom) {
             const dom = (fiber.dom = createDom(fiber.type));
@@ -115,6 +121,8 @@ function performWorkOfUnit(fiber) {
     }
 
     const children = isFuctionComponent ? [fiber.type()] : fiber.props.children
+    console.log('children',children)
+    console.log('fiber type ',fiber.type)
     initChildren(fiber, children)
 
     if (fiber.child) {
