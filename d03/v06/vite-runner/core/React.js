@@ -6,7 +6,10 @@ function createElement(type, props, ...children) {
         props: {
             ...props,
             children: children.map((child) => {
-                return typeof child === 'string' ? createTextNode(child) : child
+                console.log(child)
+                const isTextNode = typeof child === "string" || typeof child === "number"
+                return isTextNode ? createTextNode(child) : child
+                // return typeof child === 'string' ? createTextNode(child) : child
             })
         }
     }
@@ -85,7 +88,7 @@ function updateProps(dom, props) {
     });
 }
 
-function initChildren(fiber,children) {
+function initChildren(fiber, children) {
     let prevChild = null;
     children.forEach((child, index) => {
         const newFiber = {
@@ -121,16 +124,19 @@ function performWorkOfUnit(fiber) {
     //     console.log('function comps:',[fiber.type()])
     // }
 
-    const children = isFuctionComponent ? [fiber.type()] : fiber.props.children
+    const children = isFuctionComponent ? [fiber.type(fiber.props)] : fiber.props.children
     initChildren(fiber, children)
+
 
     if (fiber.child) {
         return fiber.child
     }
-    if (fiber.sibling) {
-        return fiber.sibling
+    //循环，要一直往上找父级的sibling，直到父级sibling到顶为空
+    let nextFiber = fiber
+    while(nextFiber){
+        if(nextFiber.sibling) return nextFiber.sibling
+        nextFiber = nextFiber.parent
     }
-    return fiber.parent?.sibling
 }
 requestIdleCallback(workLoop)
 /**
