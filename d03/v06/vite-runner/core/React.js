@@ -60,7 +60,7 @@ function commitWork(fiber) {
     if (!fiber) return
 
     let fiberParent = fiber.parent
-    if (!fiberParent.dom) {
+    while (!fiberParent.dom) {
         fiberParent = fiberParent.parent
     }
     if (fiber.dom) {
@@ -107,9 +107,6 @@ function initChildren(fiber,children) {
 }
 function performWorkOfUnit(fiber) {
     const isFuctionComponent = typeof fiber.type === "function"
-    if(isFuctionComponent){
-        console.log('is function',fiber.type)
-    }
     if (!isFuctionComponent) {
         if (!fiber.dom) {
             const dom = (fiber.dom = createDom(fiber.type));
@@ -119,10 +116,12 @@ function performWorkOfUnit(fiber) {
             updateProps(dom, fiber.props);
         }
     }
+    // else{
+    //     console.log('function comp:',fiber.type)
+    //     console.log('function comps:',[fiber.type()])
+    // }
 
     const children = isFuctionComponent ? [fiber.type()] : fiber.props.children
-    console.log('children',children)
-    console.log('fiber type ',fiber.type)
     initChildren(fiber, children)
 
     if (fiber.child) {

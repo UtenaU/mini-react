@@ -1,11 +1,25 @@
 import React from "./core/React.js";
 // const App = React.createElement("div", { id: "app" }, 'hello,','mini-', 'react','-world')
-function Counter(){
+function Counter() {
     return <div>count</div>
 }
-const App = <div>hello-mini-rct
-    <Counter></Counter>
-</div>
+function CounterContainer() {
+    return <Counter></Counter>
+}
+
+function App() {
+    return (
+        <div>hello-mini-rct
+            <Counter></Counter>
+            {/* <CounterContainer></CounterContainer> */}
+        </div>
+    )
+}
+// const App =
+//     <div>hello-mini-rct
+//         {/* <Counter></Counter> */}
+//         <CounterContainer></CounterContainer>
+//     </div>
 // function App(){
 //     return <div>xxx,mini-react</div>
 // }
