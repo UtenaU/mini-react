@@ -108,25 +108,25 @@ function initChildren(fiber, children) {
         prevChild = newFiber;
     });
 }
+function updateFunctionComponent(fiber) {
+    const children = [fiber.type(fiber.props)]
+    initChildren(fiber, children)
+}
+function updateHostComponent(fiber) {
+    if (!fiber.dom) {
+        const dom = (fiber.dom = createDom(fiber.type));
+        updateProps(dom, fiber.props);
+    }
+    const children = fiber.props.children
+    initChildren(fiber, children)
+}
 function performWorkOfUnit(fiber) {
     const isFuctionComponent = typeof fiber.type === "function"
-    if (!isFuctionComponent) {
-        if (!fiber.dom) {
-            const dom = (fiber.dom = createDom(fiber.type));
-
-            // fiber.parent.dom.append(dom);
-
-            updateProps(dom, fiber.props);
-        }
+    if(isFuctionComponent){
+        updateFunctionComponent(fiber)
+    }else{
+        updateHostComponent(fiber)
     }
-    // else{
-    //     console.log('function comp:',fiber.type)
-    //     console.log('function comps:',[fiber.type()])
-    // }
-
-    const children = isFuctionComponent ? [fiber.type(fiber.props)] : fiber.props.children
-    initChildren(fiber, children)
-
 
     if (fiber.child) {
         return fiber.child
